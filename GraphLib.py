@@ -94,21 +94,15 @@ class Renderer(object):
     def __init__(self, screen):
         self.screen = screen
         _, _, self.width, self.height = screen.get_rect()
-
         glEnable(GL_DEPTH_TEST)
         glViewport(0, 0, self.width, self.height)
-
         self.scene = []
-
         self.pointLight = glm.vec3(-10, 0, -5)
-
         self.tiempo = 0
         self.valor = 0
-
         # View Matrix
         self.camPosition = glm.vec3(0, 0, 0)
         self.camRotation = glm.vec3(0, 0, 0)  # pitch, yaw, roll
-
         # Projection Matrix
         self.projectionMatrix = glm.perspective(
             glm.radians(60), self.width / self.height,
