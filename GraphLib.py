@@ -21,12 +21,9 @@ class Model(object):
     def getModelMatrix(self):
         identity = glm.mat4(1)
         translateMatrix = glm.translate(identity, self.position)
-        pitch = glm.rotate(identity, glm.radians(
-            self.rotation.x), glm.vec3(1, 0, 0))
-        yaw = glm.rotate(identity, glm.radians(
-            self.rotation.y), glm.vec3(0, 1, 0))
-        roll = glm.rotate(identity, glm.radians(
-            self.rotation.z), glm.vec3(0, 0, 1))
+        pitch = glm.rotate(identity, glm.radians(self.rotation.x), glm.vec3(1, 0, 0))
+        yaw = glm.rotate(identity, glm.radians(self.rotation.y), glm.vec3(0, 1, 0))
+        roll = glm.rotate(identity, glm.radians(self.rotation.z), glm.vec3(0, 0, 1))
         rotationMatrix = pitch * yaw * roll
         scaleMatrix = glm.scale(identity, self.scale)
         return translateMatrix * rotationMatrix * scaleMatrix
@@ -48,6 +45,12 @@ class Model(object):
         self.vertBuffer = array(buffer, dtype=float32)
         self.VBO = glGenBuffers(1)  # Vertex Buffer Object
         self.VAO = glGenVertexArrays(1)  # Vertex Array Object
+
+    # def lookAt(self, eye: glm.vec3, camposition = glm.vec3(0,0,0)):
+    #     front = camposition - eye
+    #     front = front / glm.fastNormalize(front)
+    #     right = 
+    #     right =
 
     def appendToBuffer(self, buffer, arg1):
         buffer.append(arg1[0])
@@ -108,22 +111,21 @@ class Renderer(object):
             glm.radians(60), self.width / self.height,
             0.1, 1000)
 
+    def LookAt(self, eye, camPosition = glm.vec3(0,0,0)):
+
+        pass
+
     def getViewMatrix(self):
         identity = glm.mat4(1)
-
         translateMatrix = glm.translate(identity, self.camPosition)
-
         pitch = glm.rotate(identity, glm.radians(
             self.camRotation.x), glm.vec3(1, 0, 0))
         yaw = glm.rotate(identity, glm.radians(
             self.camRotation.y), glm.vec3(0, 1, 0))
         roll = glm.rotate(identity, glm.radians(
             self.camRotation.z), glm.vec3(0, 0, 1))
-
         rotationMatrix = pitch * yaw * roll
-
         camMatrix = translateMatrix * rotationMatrix
-
         return glm.inverse(camMatrix)
 
     def wireframeMode(self):
@@ -142,30 +144,23 @@ class Renderer(object):
     def render(self):
         glClearColor(0.2, 0.2, 0.2, 1)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
         glUseProgram(self.active_shader)
-
         if self.active_shader:
             glUniformMatrix4fv(
                 glGetUniformLocation(self.active_shader, "viewMatrix"),
                 1, GL_FALSE, glm.value_ptr(self.getViewMatrix()))
-
             glUniformMatrix4fv(
                 glGetUniformLocation(self.active_shader, "projectionMatrix"),
                 1, GL_FALSE, glm.value_ptr(self.projectionMatrix))
-
             glUniform1f(glGetUniformLocation(
                 self.active_shader, "tiempo"), self.tiempo)
             glUniform1f(glGetUniformLocation(
                 self.active_shader, "valor"), self.valor)
-
             glUniform3f(glGetUniformLocation(self.active_shader, "pointLight"),
                         self.pointLight.x, self.pointLight.y, self.pointLight.z)
-
         for model in self.scene:
             if self.active_shader:
                 glUniformMatrix4fv(
                     glGetUniformLocation(self.active_shader, "modelMatrix"),
                     1, GL_FALSE, glm.value_ptr(model.getModelMatrix()))
-
             model.renderInScene()
