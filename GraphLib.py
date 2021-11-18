@@ -21,9 +21,12 @@ class Model(object):
     def getModelMatrix(self):
         identity = glm.mat4(1)
         translateMatrix = glm.translate(identity, self.position)
-        pitch = glm.rotate(identity, glm.radians(self.rotation.x), glm.vec3(1, 0, 0))
-        yaw = glm.rotate(identity, glm.radians(self.rotation.y), glm.vec3(0, 1, 0))
-        roll = glm.rotate(identity, glm.radians(self.rotation.z), glm.vec3(0, 0, 1))
+        pitch = glm.rotate(identity, glm.radians(
+            self.rotation.x), glm.vec3(1, 0, 0))
+        yaw = glm.rotate(identity, glm.radians(
+            self.rotation.y), glm.vec3(0, 1, 0))
+        roll = glm.rotate(identity, glm.radians(
+            self.rotation.z), glm.vec3(0, 0, 1))
         rotationMatrix = pitch * yaw * roll
         scaleMatrix = glm.scale(identity, self.scale)
         return translateMatrix * rotationMatrix * scaleMatrix
@@ -49,7 +52,7 @@ class Model(object):
     # def lookAt(self, eye: glm.vec3, camposition = glm.vec3(0,0,0)):
     #     front = camposition - eye
     #     front = front / glm.fastNormalize(front)
-    #     right = 
+    #     right =
     #     right =
 
     def appendToBuffer(self, buffer, arg1):
@@ -111,10 +114,6 @@ class Renderer(object):
             glm.radians(60), self.width / self.height,
             0.1, 1000)
 
-    def LookAt(self, eye, camPosition = glm.vec3(0,0,0)):
-
-        pass
-
     def getViewMatrix(self):
         identity = glm.mat4(1)
         translateMatrix = glm.translate(identity, self.camPosition)
@@ -134,14 +133,14 @@ class Renderer(object):
     def filledMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
-#can recieve up to 3 shaders
-#each shader as a list with
+# can recieve up to 3 shaders
+# each shader as a list with
 #    name as first value
 #    name in shader.py as second value
-    def setShaders(self, shader1:list, shader2:list, shader3:list):
+    def setShaders(self, shader1: list, shader2: list, shader3: list):
         if shader1 is not None and shader2 is not None and shader3 is not None:
             self.active_shader = compileProgram(compileShader(shader1[0], shader1[1]),
-                compileShader(shader2[0], shader2[1]), compileShader(shader3[0], shader3[1]))
+                                                compileShader(shader2[0], shader2[1]), compileShader(shader3[0], shader3[1]))
         else:
             self.active_shader = None
 
