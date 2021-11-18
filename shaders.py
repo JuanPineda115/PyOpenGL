@@ -68,4 +68,8 @@ void main()
 
 phong_shader = """
 #version 450
+layout (location = 0) out vec4 fragColor;
+
+in vec3 outColor;
+in vec2 outTexCoords;
 """

@@ -1,2 +1,2 @@
 # PyOpenGL
-Trying openGL with Python 
+Trying openGL for the first time with Python 

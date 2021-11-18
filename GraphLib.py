@@ -134,10 +134,14 @@ class Renderer(object):
     def filledMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
-    def setShaders(self, vertexShader, fragShader):
-        if vertexShader is not None and fragShader is not None:
-            self.active_shader = compileProgram(compileShader(vertexShader, GL_VERTEX_SHADER),
-                compileShader(fragShader, GL_FRAGMENT_SHADER))
+#can recieve up to 3 shaders
+#each shader as a list with
+#    name as first value
+#    name in shader.py as second value
+    def setShaders(self, shader1:list, shader2:list, shader3:list):
+        if shader1 is not None and shader2 is not None and shader3 is not None:
+            self.active_shader = compileProgram(compileShader(shader1[0], shader1[1]),
+                compileShader(shader2[0], shader2[1]), compileShader(shader3[0], shader3[1]))
         else:
             self.active_shader = None
 
