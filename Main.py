@@ -15,11 +15,10 @@ pygame.init()
 screen = pygame.display.set_mode((width,height), pygame.DOUBLEBUF | pygame.OPENGL )
 clock = pygame.time.Clock()
 
-rend = Renderer(screen)
-rend.setShaders(shaders.vertex_shader, shaders.fragment_shader)
 
 thang = Model('src/Objects/Pedang.obj', 'src/Textures/brighter.png')
-# thang.position.x = 40
+rend = Renderer(screen, thang)
+rend.setShaders(shaders.vertex_shader, shaders.fragment_shader)
 thang.position.z = -5
 rend.scene.append( thang )
 

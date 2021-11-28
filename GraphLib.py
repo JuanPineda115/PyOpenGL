@@ -21,9 +21,12 @@ class Model(object):
     def getModelMatrix(self):
         identity = glm.mat4(1)
         translateMatrix = glm.translate(identity, self.position)
-        pitch = glm.rotate(identity, glm.radians(self.rotation.x), glm.vec3(1, 0, 0))
-        yaw = glm.rotate(identity, glm.radians(self.rotation.y), glm.vec3(0, 1, 0))
-        roll = glm.rotate(identity, glm.radians(self.rotation.z), glm.vec3(0, 0, 1))
+        pitch = glm.rotate(identity, glm.radians(
+            self.rotation.x), glm.vec3(1, 0, 0))
+        yaw = glm.rotate(identity, glm.radians(
+            self.rotation.y), glm.vec3(0, 1, 0))
+        roll = glm.rotate(identity, glm.radians(
+            self.rotation.z), glm.vec3(0, 0, 1))
         rotationMatrix = pitch * yaw * roll
         scaleMatrix = glm.scale(identity, self.scale)
         return translateMatrix * rotationMatrix * scaleMatrix
@@ -46,16 +49,13 @@ class Model(object):
         self.VBO = glGenBuffers(1)  # Vertex Buffer Object
         self.VAO = glGenVertexArrays(1)  # Vertex Array Object
 
-    # def lookAt(self, eye: glm.vec3, camposition = glm.vec3(0,0,0)):
-    #     front = camposition - eye
-    #     front = front / glm.fastNormalize(front)
-    #     right = 
-    #     right =
-
     def appendToBuffer(self, buffer, arg1):
         buffer.append(arg1[0])
         buffer.append(arg1[1])
         buffer.append(arg1[2])
+
+    def clearBuffer(self):
+        self.vertBuffer = []
 
     def renderInScene(self):
         glBindVertexArray(self.VAO)
@@ -94,7 +94,7 @@ class Model(object):
 
 
 class Renderer(object):
-    def __init__(self, screen):
+    def __init__(self, screen, toRender):
         self.screen = screen
         _, _, self.width, self.height = screen.get_rect()
         glEnable(GL_DEPTH_TEST)
@@ -110,23 +110,27 @@ class Renderer(object):
         self.projectionMatrix = glm.perspective(
             glm.radians(60), self.width / self.height,
             0.1, 1000)
+        self.activeModel = toRender
+        self.viewMatrix = self.getViewMatrix()
 
-    def LookAt(self, eye, camPosition = glm.vec3(0,0,0)):
-
-        pass
+    def lookAt(self, eye, camPosition):
+        front = camPosition - eye
+        # print('despues de la resta', camPosition, eye, front)
+        front = front / glm.normalize(front)
+        right = glm.cross(glm.vec3(0, 1, 0), front)
+        right = right / glm.normalize(right)
+        up = glm.cross(front, right)
+        up = up / glm.normalize(up)
+        self.camMatrix = glm.mat4(
+            [right.x, right.y, right.z, 0],
+            [up.x, up.y, up.z, 0],
+            [front.x, front.y, front.z, 0],
+            [camPosition.x, camPosition.y, camPosition.z, 1])
+        self.viewMatrix = glm.inverse(self.camMatrix)
 
     def getViewMatrix(self):
-        identity = glm.mat4(1)
-        translateMatrix = glm.translate(identity, self.camPosition)
-        pitch = glm.rotate(identity, glm.radians(
-            self.camRotation.x), glm.vec3(1, 0, 0))
-        yaw = glm.rotate(identity, glm.radians(
-            self.camRotation.y), glm.vec3(0, 1, 0))
-        roll = glm.rotate(identity, glm.radians(
-            self.camRotation.z), glm.vec3(0, 0, 1))
-        rotationMatrix = pitch * yaw * roll
-        camMatrix = translateMatrix * rotationMatrix
-        return glm.inverse(camMatrix)
+        self.camMatrix = self.activeModel.getModelMatrix()
+        return glm.inverse(self.camMatrix)
 
     def wireframeMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
@@ -134,12 +138,20 @@ class Renderer(object):
     def filledMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
+# can recieve up to 3 shaders
+# each shader as a list with
+#    name as first value
+#    name in shader.py as second value
     def setShaders(self, vertexShader, fragShader):
         if vertexShader is not None and fragShader is not None:
             self.active_shader = compileProgram(compileShader(vertexShader, GL_VERTEX_SHADER),
-                compileShader(fragShader, GL_FRAGMENT_SHADER))
+                                                compileShader(fragShader, GL_FRAGMENT_SHADER))
         else:
             self.active_shader = None
+
+    def update(self):
+        print('en el pupdat', self.activeModel.position)
+        self.viewMatrix = self.lookAt(glm.vec3(0,0,0), self.camPosition)
 
     def render(self):
         glClearColor(0.2, 0.2, 0.2, 1)
