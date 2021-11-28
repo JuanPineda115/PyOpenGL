@@ -51,21 +51,16 @@ void main()
 }
 """
 
-toon_shader = """
+Gris = """
 #version 450
 layout (location = 0) out vec4 fragColor;
-
 in vec3 outColor;
 in vec2 outTexCoords;
-
 uniform sampler2D tex;
-
 void main()
 {
-    fragColor = vec4(outColor, 3) * texture(tex, outTexCoords);
+    fragColor = vec4(outColor, 1) * texture(tex, outTexCoords);
+    float color = (fragColor.x + fragColor.y + fragColor.z) / 3.0;
+    fragColor = vec4(color, color, color, 1);
 }
-"""
-
-phong_shader = """
-#version 450
 """
