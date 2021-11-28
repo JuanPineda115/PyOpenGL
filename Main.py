@@ -92,8 +92,6 @@ def gaem():
         pygame.mixer.music.fadeout(99999)
         pygame.display.set_caption("Python OpenGL by Juan Pablo Pineda")
         keys = pygame.key.get_pressed()
-        mouse = pygame.mouse.get_pressed()
-        mouse2 = pygame.MOUSEBUTTONDOWN;
         # Traslacion de camara
         if keys[K_d]:
             rend.camPosition.x += 1 * deltaTime
@@ -109,20 +107,20 @@ def gaem():
         if keys[K_DOWN]:
             if rend.normals < 0.2:
                 rend.normals += 0.1 * deltaTime
-
         # Rotacion de camara
         if keys[K_q]:
             rend.camRotation.y += 15 * deltaTime
-            rend.camPosition.x += 1.5 * deltaTime
+            rend.camPosition.x += 5 * deltaTime
         if keys[K_e]:
             rend.camRotation.y -= 15 * deltaTime
-            rend.camPosition.x -= 1.5 * deltaTime
+            rend.camPosition.x -= 5 * deltaTime
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 isRunning = False
             elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_ESCAPE:
                     isRunning = False
+                    quit()
                 if ev.key == K_1:
                     rend.filledMode()
                 if ev.key == K_2:
