@@ -6,7 +6,7 @@ from numpy import array, float32
 
 import obj
 
-
+#TODO focus model center with cam
 class Model(object):
     def __init__(self, objName, textureName):
         self.model = obj.Obj(objName)
@@ -56,12 +56,10 @@ class Model(object):
     def renderInScene(self):
         glBindVertexArray(self.VAO)
         glBindBuffer(GL_ARRAY_BUFFER, self.VBO)
-        # Los vertices
         glBufferData(GL_ARRAY_BUFFER,  
                     self.vertBuffer.nbytes,
                     self.vertBuffer,  
                     GL_STATIC_DRAW)
-        # Atributo de posicion
         glVertexAttribPointer(0,               
                                 3,               
                                 GL_FLOAT,        
@@ -69,7 +67,6 @@ class Model(object):
                                 4 * 8,           
                                 ctypes.c_void_p(0)) 
         glEnableVertexAttribArray(0)
-        # Atributo de normales
         glVertexAttribPointer(1,
                                 3,
                                 GL_FLOAT,
@@ -77,7 +74,6 @@ class Model(object):
                                 4 * 8,
                                 ctypes.c_void_p(4 * 3))
         glEnableVertexAttribArray(1)
-        # Atributo de coordenadas de textura
         glVertexAttribPointer(2,
                                 2,
                                 GL_FLOAT,
@@ -85,7 +81,6 @@ class Model(object):
                                 4 * 8,
                                 ctypes.c_void_p(4 * 6))
         glEnableVertexAttribArray(2)
-        # Dar textura
         glBindTexture(GL_TEXTURE_2D, self.texture)
         glTexImage2D(GL_TEXTURE_2D,                     
                     0,                                 
@@ -97,7 +92,6 @@ class Model(object):
                     GL_UNSIGNED_BYTE,                  
                     self.textureData)                  
         glGenerateMipmap(GL_TEXTURE_2D)
-        # Dibujar
         glDrawArrays(GL_TRIANGLES, 0, len(self.model.faces)
                      * 3)  
 
